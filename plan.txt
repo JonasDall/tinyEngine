@@ -1,0 +1,6 @@
+tinyEngine
+
+Description:
+tinyEngine is a very simple library for making 2D games.
+It is seperated into four modules, audio, graphics, network, and physics.
+The library includes multiple main functions for creating asset files, like levels and animations.
