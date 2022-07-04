@@ -4,3 +4,7 @@ Description:
 tinyEngine is a very simple library for making 2D games.
 It is seperated into four modules, audio, graphics, network, and physics.
 The library includes multiple main functions for creating asset files, like levels and animations.
+
+Structure:
+The core of the library is src.cpp. This contains the base component class. All other objects derive from this class.
+The part of the library that puts these objects to use, is the engine file. This includes all the other files, and takes care of level loading and each frame.
