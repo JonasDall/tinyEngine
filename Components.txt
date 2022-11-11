@@ -1,0 +1,10 @@
+-level (contains an array of layers)
+-layer (contains an array of components)
+
+-component (base class)
+    -collision (with own handler to solve)
+        -sphere (sphere type with radius)
+        -box (box type with length and width)
+    -CollisionHandler (An object to check all collisions)
+    -Animation (Contains olc::Decal)
+    -AnimStateMachine (Contains an Animation and monitors values to switch between states)

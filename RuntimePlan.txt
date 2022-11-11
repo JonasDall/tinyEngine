@@ -1,0 +1,9 @@
+-Run Game
+
+-Open config file
+
+-Check for location startup level
+
+-Find json file with level
+
+-Read all objects and add to array of components
