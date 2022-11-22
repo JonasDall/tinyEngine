@@ -5,9 +5,12 @@
 
 int main()
 {
+    /*
     tiny::TinyEngine engine({256, 240}, "Game", "asset/Map.json");
     
     engine.Run();
+    */
+
     // engine.LoadLevel("asset/Map.json");
 
 

@@ -10,6 +10,7 @@
 				"-g",
 				"${file}",
 				"lib/olcPGE.cpp",
+				"lib/tinyxml2.cpp",
 				"source/tiny.cpp",
 				"-luser32",
 				"-lgdi32",
