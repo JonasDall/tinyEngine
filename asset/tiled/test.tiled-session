@@ -1,0 +1,108 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "testMap.json",
+    "expandedProjectPaths": [
+        "C:/Users/jonas/Documents/Koding/Workspaces/jsonTest/resources"
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "": {
+            "scaleInDock": 1
+        },
+        "C:/Users/jonas/Documents/Koding/Workspaces/jsonTest/resources/Basic.tsx": {
+            "scaleInDock": 3,
+            "scaleInEditor": 1
+        },
+        "C:/Users/jonas/Documents/Koding/Workspaces/jsonTest/resources/Basic2.tsx": {
+            "scaleInDock": 3,
+            "scaleInEditor": 1
+        },
+        "C:/Users/jonas/Documents/Koding/Workspaces/jsonTest/resources/Basic2.xml.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "C:/Users/jonas/Documents/Koding/Workspaces/jsonTest/resources/Map..tmj": {
+            "scale": 3,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 4,
+                "y": 76.83333333333334
+            }
+        },
+        "C:/Users/jonas/Documents/Koding/Workspaces/jsonTest/resources/Map.tmx": {
+            "scale": 3,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 97.33333333333334,
+                "y": 132.33333333333331
+            }
+        },
+        "C:/Users/jonas/Documents/Koding/Workspaces/jsonTest/resources/Map.xml": {
+            "scale": 4.971666666666667,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 127.9249078109286,
+                "y": 119.97988602078445
+            }
+        },
+        "C:/Users/jonas/Documents/Koding/Workspaces/tinyEngine/asset/testMap.tmx": {
+            "scale": 4.801953125,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 128.07288700886687,
+                "y": 120.15944033189619
+            }
+        },
+        "C:/Users/jonas/Documents/Koding/Workspaces/tinyEngine/asset/testTileset.tsx": {
+            "scaleInDock": 1
+        },
+        "testMap.json": {
+            "scale": 2,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 212.5,
+                "y": 204.5
+            }
+        },
+        "testTile.json": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "last.exportedFilePath": "C:/Users/jonas/Documents/Koding/Workspaces/tinyEngine/asset",
+    "last.imagePath": "C:/Users/jonas/Documents/Koding/Workspaces/tinyEngine/asset",
+    "lastUsedTilesetExportFilter": "JSON tileset files (*.tsj *.json)",
+    "map.height": 15,
+    "map.lastUsedExportFilter": "JSON map files (*.json)",
+    "map.lastUsedFormat": "json",
+    "map.orientation": null,
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 16,
+    "openFiles": [
+        "testMap.json",
+        "testTile.json"
+    ],
+    "project": "test.tiled-project",
+    "property.type": "int",
+    "recentFiles": [
+        "testTile.json",
+        "testMap.json",
+        "C:/Users/jonas/Documents/Koding/Workspaces/jsonTest/resources/Map.tmx",
+        "C:/Users/jonas/Documents/Koding/Workspaces/jsonTest/resources/Basic.tsx",
+        "C:/Users/jonas/Documents/Koding/Workspaces/jsonTest/resources/Basic2.tsx"
+    ],
+    "tileset.lastUsedFormat": "json",
+    "tileset.margin": 0,
+    "tileset.spacing": 0,
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    },
+    "tileset.transparentColor": "#ff00ff",
+    "tileset.type": 0,
+    "tileset.useTransparentColor": false
+}
