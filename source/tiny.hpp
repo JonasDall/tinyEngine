@@ -11,6 +11,24 @@
 namespace tiny
 {
 
+struct int2d{
+int x;
+int y;
+};
+
+struct float2d{
+float x;
+float y;
+};
+
+struct tileSet{
+int firstgid = 0;
+std::string path = "";
+int2d imageRes = {0, 0};
+int2d tileRes = {0, 0};
+olc::Decal image;
+};
+
 class Level;
 class TinyEngine;
 class PixelGame;
@@ -90,6 +108,7 @@ class Level
 {
 private:
     std::vector<std::unique_ptr<Layer>> m_layers;
+    std::vector<tileSet>                m_tileSets;
 
 protected:
     template <typename T>
@@ -97,6 +116,7 @@ protected:
 
 public:
     void AddLayer(nlohmann::json description, TinyEngine* engine);
+    void AddTileset(nlohmann::json description);
     void DisplayNames();
     bool LevelUpdate(float fElapsedTime);
     void LevelDraw(PixelGame* pixelRef);
@@ -113,15 +133,15 @@ public:
     bool OnUserCreate();
     bool OnUserUpdate(float fElapsedTime);
     bool OnUserDestroy();
-
 };
 
 class TinyEngine
 {
 private:
-    std::map<int, std::unique_ptr<Component>>           m_worldComponents;
+    // std::map<int, std::unique_ptr<Component>>           m_worldComponents;
 
-    Level                                               m_currentLevel;
+    std::map<std::string, std::unique_ptr<Level>>       m_levels;
+    std::string                                         m_currentLevelName;
     // std::unique_ptr<ComponentFactory>                   m_factory;
     std::unique_ptr<PixelGame>                          m_pixelGameInstance;
     std::string                                         m_LevelPath;
@@ -136,8 +156,8 @@ public:
     ~TinyEngine();
 
     // ComponentFactory& Getfactory();
-    void LoadLevel(std::string path);
-    Level* GetLevel();
+    void LoadLevel(std::string path, std::string name);
+    Level* GetLevel(std::string name);
     Component* GetComponentByID(int id);
     void AddComponentByID(nlohmann::json& description);
     bool Update(float fElapsedTIme);

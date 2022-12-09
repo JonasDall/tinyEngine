@@ -173,6 +173,12 @@ void Level::AddLayer(nlohmann::json description, TinyEngine* engine)
     }
 }
 
+void Level::AddTileset(nlohmann::json description)
+{
+
+}
+
+
 void Level::DisplayNames()
 {
     for (int i{}; i < m_layers.size(); ++i)
@@ -207,7 +213,7 @@ PixelGame::~PixelGame()
 
 bool PixelGame::OnUserCreate()
 {
-    m_engine->LoadLevel(m_engine->GetLevelPath());
+    // m_engine->LoadLevel(m_engine->GetLevelPath());
     return 1;
 }
 
@@ -238,14 +244,17 @@ TinyEngine::TinyEngine(olc::vi2d resolution, std::string name, std::string level
 
 TinyEngine::~TinyEngine(){}
 
-void TinyEngine::LoadLevel(std::string path)
+
+void TinyEngine::LoadLevel(std::string path, std::string name)
 {
     std::ifstream file{ path };
     if (!file){ std::cout << "Could not open file\n"; return; }
 
     std::cout << "Map loaded\n";
 
-    m_worldComponents.clear();
+    // m_worldComponents.clear();
+
+    m_levels[name] = std::make_unique<Level>();
 
     nlohmann::json data = nlohmann::json::parse(file);
 
@@ -258,20 +267,30 @@ void TinyEngine::LoadLevel(std::string path)
         nlohmann::json description;
         description["description"] = data.at("layers")[i];
 
-        m_currentLevel.AddLayer(description, this);
+        // m_currentLevel.AddLayer(description, this);
     }
 
     return;
 }
 
-Level* TinyEngine::GetLevel(){ return &m_currentLevel; }
+Level* TinyEngine::GetLevel(std::string name){
+    try
+    {
+        return m_levels.at(name).get();
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+        return nullptr;
+    }
+    }
 
 void TinyEngine::AddComponentByID(nlohmann::json& description)
 {
     // std::cout << description.at("id") << '\n';
     int id = description.at("id");
     nlohmann::json descCopy = description;
-    m_worldComponents[id] = std::make_unique<Component>(descCopy);
+    // m_worldComponents[id] = std::make_unique<Component>(descCopy);
 }
 
 bool TinyEngine::Update(float fElapsedTime)
@@ -285,7 +304,7 @@ void TinyEngine::Draw()
     m_pixelGameInstance.get()->Clear(olc::WHITE);
     // m_pixelGameInstance.get()->SetPixelMode(olc::Pixel::ALPHA);
 
-    m_currentLevel.LevelDraw(m_pixelGameInstance.get());
+    m_levels.at(m_currentLevelName).get()->LevelDraw(m_pixelGameInstance.get());
     return;
 }
 

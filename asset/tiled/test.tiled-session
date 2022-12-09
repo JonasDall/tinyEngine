@@ -63,11 +63,15 @@
             "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 212.5,
-                "y": 204.5
+                "x": 151.25,
+                "y": 146.5
             }
         },
         "testTile.json": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "testTile2.json": {
             "scaleInDock": 1,
             "scaleInEditor": 1
         }
@@ -84,11 +88,13 @@
     "map.width": 16,
     "openFiles": [
         "testMap.json",
-        "testTile.json"
+        "testTile.json",
+        "testTile2.json"
     ],
     "project": "test.tiled-project",
     "property.type": "int",
     "recentFiles": [
+        "testTile2.json",
         "testTile.json",
         "testMap.json",
         "C:/Users/jonas/Documents/Koding/Workspaces/jsonTest/resources/Map.tmx",
