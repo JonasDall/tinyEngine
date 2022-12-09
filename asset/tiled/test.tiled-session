@@ -61,9 +61,9 @@
         },
         "testMap.json": {
             "scale": 2,
-            "selectedLayer": 0,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 151.25,
+                "x": 151.5,
                 "y": 146.5
             }
         },
@@ -92,7 +92,7 @@
         "testTile2.json"
     ],
     "project": "test.tiled-project",
-    "property.type": "int",
+    "property.type": "object",
     "recentFiles": [
         "testTile2.json",
         "testTile.json",

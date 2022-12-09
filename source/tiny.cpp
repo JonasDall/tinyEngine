@@ -147,6 +147,11 @@ void TileLayer::LayerDraw(PixelGame* pixelRef)
 // --------------------------------------------------------------------------------------------------------------------------------------------
 // Level
 // --------------------------------------------------------------------------------------------------------------------------------------------
+Level::Level(nlohmann::json description, PixelGame* pixelGame) : m_description{description}, m_pixelGame{pixelGame}
+{
+    std::cout << description << '\n';
+}
+
 template <typename T>
 void Level::AddItem(nlohmann::json description, TinyEngine* engine)
 {
@@ -187,20 +192,20 @@ void Level::DisplayNames()
     }
 }
 
-bool Level::LevelUpdate(float fElapsedTime){ return 1; }
+bool Level::Update(float fElapsedTime){ return 1; }
 
-void Level::LevelDraw(PixelGame* pixelRef)
+void Level::Draw()
 {
     for (int i{}; i < m_layers.size(); ++i)
     {
-        m_layers[i].get()->LayerDraw(pixelRef);
+        m_layers[i].get()->LayerDraw(m_pixelGame);
     }
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------
 // PixelGame
 // --------------------------------------------------------------------------------------------------------------------------------------------
-PixelGame::PixelGame(TinyEngine* engine) : m_engine{engine}
+PixelGame::PixelGame(TinyEngine* engine, std::string level) : m_engine{engine}, m_firstLevel{level}
 {
     // std::cout << "Bitch lasagna" << '\n';
     sAppName = engine->m_windowName;
@@ -213,7 +218,7 @@ PixelGame::~PixelGame()
 
 bool PixelGame::OnUserCreate()
 {
-    // m_engine->LoadLevel(m_engine->GetLevelPath());
+    m_engine->LoadLevel(m_firstLevel);
     return 1;
 }
 
@@ -221,12 +226,8 @@ bool PixelGame::OnUserUpdate(float fElapsedTime)
 {
     if (GetKey(olc::Key::ENTER).bPressed) return 0;
 
-    // std::cout << "Update\n";
-    
-    // Clear(olc::WHITE);
-
-    // m_engine->Update(fElapsedTime);
-    m_engine->Draw();
+    // m_engine->GetLevel()->Update(fElapsedTime);
+    m_engine->GetLevel()->Draw();
 
     return 1;
 }
@@ -240,49 +241,28 @@ bool PixelGame::OnUserDestroy(){ return 1; }
 // ComponentFactory& TinyEngine::Getfactory(){ return m_factory; }
 
 // Load JSON level file
-TinyEngine::TinyEngine(olc::vi2d resolution, std::string name, std::string level) : m_resolution{resolution}, m_windowName{name}, m_LevelPath{level}{}
+TinyEngine::TinyEngine(olc::vi2d resolution, std::string name) : m_resolution{resolution}, m_windowName{name}{}
 
 TinyEngine::~TinyEngine(){}
 
-
-void TinyEngine::LoadLevel(std::string path, std::string name)
+void TinyEngine::LoadLevel(std::string path)
 {
     std::ifstream file{ path };
     if (!file){ std::cout << "Could not open file\n"; return; }
 
     std::cout << "Map loaded\n";
 
-    // m_worldComponents.clear();
-
-    m_levels[name] = std::make_unique<Level>();
-
     nlohmann::json data = nlohmann::json::parse(file);
 
+    m_level = std::make_unique<Level>(data, m_pixelGame.get());
+
     std::cout << "Map parsed\n";
-
-    for (int i{}; i < data.at("layers").size(); ++i)
-    {
-        // std::cout << data.at("layers")[i].at("type") << '\n';
-
-        nlohmann::json description;
-        description["description"] = data.at("layers")[i];
-
-        // m_currentLevel.AddLayer(description, this);
-    }
 
     return;
 }
 
-Level* TinyEngine::GetLevel(std::string name){
-    try
-    {
-        return m_levels.at(name).get();
-    }
-    catch(const std::exception& e)
-    {
-        std::cerr << e.what() << '\n';
-        return nullptr;
-    }
+Level* TinyEngine::GetLevel(){
+    return m_level.get();
     }
 
 void TinyEngine::AddComponentByID(nlohmann::json& description)
@@ -293,32 +273,18 @@ void TinyEngine::AddComponentByID(nlohmann::json& description)
     // m_worldComponents[id] = std::make_unique<Component>(descCopy);
 }
 
-bool TinyEngine::Update(float fElapsedTime)
+void TinyEngine::Run(std::string level)
 {
-    // m_currentLevel.Update(pixelRef);
-    return 1;
-}
-
-void TinyEngine::Draw()
-{
-    m_pixelGameInstance.get()->Clear(olc::WHITE);
-    // m_pixelGameInstance.get()->SetPixelMode(olc::Pixel::ALPHA);
-
-    m_levels.at(m_currentLevelName).get()->LevelDraw(m_pixelGameInstance.get());
-    return;
-}
-
-void TinyEngine::Run()
-{
-    m_pixelGameInstance = std::make_unique<PixelGame>(this);
-     if (m_pixelGameInstance.get()->Construct(m_resolution.x, m_resolution.y, 4, 4))
-        m_pixelGameInstance.get()->Start();
+    m_pixelGame = std::make_unique<PixelGame>(this, level);
+     if (m_pixelGame.get()->Construct(m_resolution.x, m_resolution.y, 4, 4))
+        m_pixelGame.get()->Start();
     return;
 }
 
 std::string TinyEngine::GetLevelPath(){ return m_LevelPath; }
 
 void TinyEngine::AddDefinition(std::string key, std::function<Component*()> lambda) { m_objectFactory[key] = lambda; }
+
 std::function<Component*()> TinyEngine::GetDefinition(std::string key) {return m_objectFactory[key]; }
 // --------------------------------------------------------------------------------------------------------------------------------------------
 // ComponentFactory

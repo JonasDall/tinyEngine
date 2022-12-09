@@ -109,26 +109,31 @@ class Level
 private:
     std::vector<std::unique_ptr<Layer>> m_layers;
     std::vector<tileSet>                m_tileSets;
+    nlohmann::json                      m_description;
+    PixelGame*                          m_pixelGame;
 
-protected:
+    void AddLayer(nlohmann::json description, TinyEngine* engine);
+    void AddTileset(nlohmann::json description);
+
+// protected:
     template <typename T>
     void AddItem(nlohmann::json description, TinyEngine* engine);
 
 public:
-    void AddLayer(nlohmann::json description, TinyEngine* engine);
-    void AddTileset(nlohmann::json description);
+    Level(nlohmann::json description, PixelGame* pixelGame);
     void DisplayNames();
-    bool LevelUpdate(float fElapsedTime);
-    void LevelDraw(PixelGame* pixelRef);
+    bool Update(float fElapsedTime);
+    void Draw();
 };
 
 class PixelGame : public olc::PixelGameEngine
 {
 private:
     TinyEngine* m_engine;
+    std::string m_firstLevel;
 
 public:
-    PixelGame(TinyEngine* engine);
+    PixelGame(TinyEngine* engine, std::string level);
     ~PixelGame();
     bool OnUserCreate();
     bool OnUserUpdate(float fElapsedTime);
@@ -140,10 +145,9 @@ class TinyEngine
 private:
     // std::map<int, std::unique_ptr<Component>>           m_worldComponents;
 
-    std::map<std::string, std::unique_ptr<Level>>       m_levels;
-    std::string                                         m_currentLevelName;
-    // std::unique_ptr<ComponentFactory>                   m_factory;
-    std::unique_ptr<PixelGame>                          m_pixelGameInstance;
+    std::unique_ptr<Level>                              m_level;
+
+    std::unique_ptr<PixelGame>                          m_pixelGame;
     std::string                                         m_LevelPath;
     olc::vi2d                                           m_resolution;
     std::map<std::string, std::function<Component*()>>  m_objectFactory;
@@ -152,34 +156,18 @@ private:
 public:
     std::string                                         m_windowName;
 
-    TinyEngine(olc::vi2d resolution, std::string name, std::string level);
+    TinyEngine(olc::vi2d resolution, std::string name);
     ~TinyEngine();
 
     // ComponentFactory& Getfactory();
-    void LoadLevel(std::string path, std::string name);
-    Level* GetLevel(std::string name);
+    void LoadLevel(std::string path);
+    Level* GetLevel();
     Component* GetComponentByID(int id);
     void AddComponentByID(nlohmann::json& description);
-    bool Update(float fElapsedTIme);
-    void Draw();
-    void Run();
+    void Run(std::string level);
     std::string GetLevelPath();
 
     void AddDefinition(std::string key, std::function<Component*()> lambda);
     std::function<Component*()> GetDefinition(std::string key);
 };
-
-/*
-class ComponentFactory
-{
-private:
-
-public:
-    ComponentFactory() = default;
-    void AddDefinition(std::string key, std::function<Component*()> lambda);
-    std::function<Component*()> GetDefinition(std::string key);
-
-};
-*/
-
 }

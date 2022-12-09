@@ -6,14 +6,9 @@
 
 int main()
 {
-    tiny::TinyEngine engine({256, 240}, "Game", "asset/tiled/testMap.json");
+    tiny::TinyEngine engine({256, 240}, "Game");
     
-    engine.Run();
-
-    engine.LoadLevel("asset/tiled/testMap.json", "test");
-
-
-    // engine.GetLevel()->DisplayNames();
+    engine.Run("asset/tiled/testMap.json");
 
     return 0;
 }
