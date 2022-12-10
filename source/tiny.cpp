@@ -149,7 +149,10 @@ void TileLayer::LayerDraw(PixelGame* pixelRef)
 // --------------------------------------------------------------------------------------------------------------------------------------------
 Level::Level(nlohmann::json description, PixelGame* pixelGame) : m_description{description}, m_pixelGame{pixelGame}
 {
-    std::cout << description << '\n';
+    // std::cout << description.at("tilesets") << '\n';
+
+    for (int i{}; i < description.at("tilesets").size(); ++i)
+        AddTileset(description.at("tilesets")[i]);
 }
 
 template <typename T>
@@ -180,16 +183,42 @@ void Level::AddLayer(nlohmann::json description, TinyEngine* engine)
 
 void Level::AddTileset(nlohmann::json description)
 {
+    // std::cout << description << '\n';
+    int firstgid = description.at("firstgid");
+    std::string relPath = description.at("source");
+    // std::cout << relPath << '\n';
+    std::string fullPath = "asset/tiled/";
+    // std::cout << fullPath << '\n';
 
-}
-
-
-void Level::DisplayNames()
-{
-    for (int i{}; i < m_layers.size(); ++i)
-    {
-        m_layers[i].get()->DisplayLayerName();
+    std::ifstream file{ fullPath + relPath };
+    if(!file.is_open()){
+    std::cout << "File does not exist\n";
+    return;
     }
+
+    nlohmann::json setData = nlohmann::json::parse(file);
+
+    int columns{ setData.at("columns") };
+    int2d imageRes{ setData.at("imagewidth"), setData.at("imageheight") };
+    int2d tileRes{ setData.at("tilewidth"), setData.at("tileheight") };
+
+    std::string imagePath = fullPath;
+    imagePath += setData.at("image");
+
+    olc::Sprite* tempSprite = new olc::Sprite;
+    tempSprite->LoadFromFile(imagePath);
+
+    olc::Decal* decal = new olc::Decal(tempSprite.get());
+
+    std::unique_ptr<olc::Decal> tempDecal(decal);
+
+    tileSet temp{firstgid, columns, imageRes, tileRes, std::make_unique<olc::Sprite>(shit),  };
+
+
+    temp.decal->get()->sprite( temp.sprite.get() );
+
+
+    m_tileSets.push_back(temp);
 }
 
 bool Level::Update(float fElapsedTime){ return 1; }
@@ -208,7 +237,7 @@ void Level::Draw()
 PixelGame::PixelGame(TinyEngine* engine, std::string level) : m_engine{engine}, m_firstLevel{level}
 {
     // std::cout << "Bitch lasagna" << '\n';
-    sAppName = engine->m_windowName;
+    sAppName = engine->GetName();
 }
 
 PixelGame::~PixelGame()
@@ -241,7 +270,7 @@ bool PixelGame::OnUserDestroy(){ return 1; }
 // ComponentFactory& TinyEngine::Getfactory(){ return m_factory; }
 
 // Load JSON level file
-TinyEngine::TinyEngine(olc::vi2d resolution, std::string name) : m_resolution{resolution}, m_windowName{name}{}
+TinyEngine::TinyEngine(olc::vi2d resolution, std::string name) : m_resolution{resolution}, m_name{name}{}
 
 TinyEngine::~TinyEngine(){}
 
@@ -281,9 +310,9 @@ void TinyEngine::Run(std::string level)
     return;
 }
 
-std::string TinyEngine::GetLevelPath(){ return m_LevelPath; }
-
 void TinyEngine::AddDefinition(std::string key, std::function<Component*()> lambda) { m_objectFactory[key] = lambda; }
+
+std::string TinyEngine::GetName() { return m_name; }
 
 std::function<Component*()> TinyEngine::GetDefinition(std::string key) {return m_objectFactory[key]; }
 // --------------------------------------------------------------------------------------------------------------------------------------------
