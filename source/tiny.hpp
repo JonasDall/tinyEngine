@@ -10,6 +10,13 @@
 
 namespace tiny
 {
+class Level;
+class TinyEngine;
+class PixelGame;
+class Component;
+struct int2d;
+struct float2d;
+struct tileSet;
 
 struct int2d{
 int x;
@@ -23,17 +30,12 @@ float y;
 
 struct tileSet{
 int firstgid = 0;
-std::string path = "";
+int columns = 0;
 int2d imageRes = {0, 0};
 int2d tileRes = {0, 0};
-olc::Decal image;
+std::unique_ptr<olc::Sprite> sprite;
+std::unique_ptr<olc::Decal> decal;
 };
-
-class Level;
-class TinyEngine;
-class PixelGame;
-class Component;
-// class ComponentFactory;
 
 class Component
 {
@@ -115,13 +117,11 @@ private:
     void AddLayer(nlohmann::json description, TinyEngine* engine);
     void AddTileset(nlohmann::json description);
 
-// protected:
     template <typename T>
     void AddItem(nlohmann::json description, TinyEngine* engine);
 
 public:
     Level(nlohmann::json description, PixelGame* pixelGame);
-    void DisplayNames();
     bool Update(float fElapsedTime);
     void Draw();
 };
@@ -148,26 +148,28 @@ private:
     std::unique_ptr<Level>                              m_level;
 
     std::unique_ptr<PixelGame>                          m_pixelGame;
-    std::string                                         m_LevelPath;
     olc::vi2d                                           m_resolution;
     std::map<std::string, std::function<Component*()>>  m_objectFactory;
+    std::string                                         m_name;
     bool                                                m_constructed{};
 
 public:
-    std::string                                         m_windowName;
-
     TinyEngine(olc::vi2d resolution, std::string name);
     ~TinyEngine();
 
-    // ComponentFactory& Getfactory();
+    void Run(std::string level);
+
     void LoadLevel(std::string path);
     Level* GetLevel();
+
     Component* GetComponentByID(int id);
     void AddComponentByID(nlohmann::json& description);
-    void Run(std::string level);
-    std::string GetLevelPath();
+    
+    std::string GetName();
 
     void AddDefinition(std::string key, std::function<Component*()> lambda);
     std::function<Component*()> GetDefinition(std::string key);
+
+    // ComponentFactory& Getfactory();
 };
 }
