@@ -28,13 +28,25 @@ float x;
 float y;
 };
 
-struct tileSet{
+class Set{
+
+private:
 int firstgid = 0;
 int columns = 0;
 int2d imageRes = {0, 0};
 int2d tileRes = {0, 0};
 std::unique_ptr<olc::Sprite> sprite;
 std::unique_ptr<olc::Decal> decal;
+
+public:
+Set(int gid, int col, int2d im, int2d ti, std::string path);
+
+int getFirstgid();
+int getColumns();
+int2d getImageRes();
+int2d getTileRes();
+olc::Sprite* getSprite();
+olc::Decal* getDecal();
 };
 
 class Component
@@ -110,12 +122,12 @@ class Level
 {
 private:
     std::vector<std::unique_ptr<Layer>> m_layers;
-    std::vector<tileSet>                m_tileSets;
+    std::vector<std::unique_ptr<Set>>   m_sets;
     nlohmann::json                      m_description;
     PixelGame*                          m_pixelGame;
 
     void AddLayer(nlohmann::json description, TinyEngine* engine);
-    void AddTileset(nlohmann::json description);
+    void AddSet(nlohmann::json description);
 
     template <typename T>
     void AddItem(nlohmann::json description, TinyEngine* engine);
@@ -124,6 +136,7 @@ public:
     Level(nlohmann::json description, PixelGame* pixelGame);
     bool Update(float fElapsedTime);
     void Draw();
+    Set* getSet(int index);
 };
 
 class PixelGame : public olc::PixelGameEngine

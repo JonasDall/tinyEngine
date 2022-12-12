@@ -11,6 +11,22 @@ namespace tiny
 {
 
 // --------------------------------------------------------------------------------------------------------------------------------------------
+// Set
+// --------------------------------------------------------------------------------------------------------------------------------------------
+Set::Set(int gid, int col, int2d im, int2d ti, std::string path) : firstgid{gid}, columns{col}, imageRes{im}, tileRes{ti}{
+    sprite = std::make_unique<olc::Sprite>(path);
+
+    decal = std::make_unique<olc::Decal>(sprite.get());
+}
+
+int Set::getFirstgid(){ return firstgid; }
+int Set::getColumns(){ return columns; }
+int2d Set::getImageRes(){ return imageRes; }
+int2d Set::getTileRes(){ return tileRes; }
+olc::Sprite* Set::getSprite(){ return sprite.get(); }
+olc::Decal*  Set::getDecal(){ return decal.get(); }
+
+// --------------------------------------------------------------------------------------------------------------------------------------------
 // Component
 // --------------------------------------------------------------------------------------------------------------------------------------------
 Component::Component(nlohmann::json description) : m_description{description}
@@ -152,7 +168,9 @@ Level::Level(nlohmann::json description, PixelGame* pixelGame) : m_description{d
     // std::cout << description.at("tilesets") << '\n';
 
     for (int i{}; i < description.at("tilesets").size(); ++i)
-        AddTileset(description.at("tilesets")[i]);
+        AddSet(description.at("tilesets")[i]);
+
+    std::cout << "Added " << m_sets.size() << " tilesets\n";
 }
 
 template <typename T>
@@ -181,10 +199,10 @@ void Level::AddLayer(nlohmann::json description, TinyEngine* engine)
     }
 }
 
-void Level::AddTileset(nlohmann::json description)
+void Level::AddSet(nlohmann::json description)
 {
     // std::cout << description << '\n';
-    int firstgid = description.at("firstgid");
+    // int firstgid = description.at("firstgid");
     std::string relPath = description.at("source");
     // std::cout << relPath << '\n';
     std::string fullPath = "asset/tiled/";
@@ -198,27 +216,14 @@ void Level::AddTileset(nlohmann::json description)
 
     nlohmann::json setData = nlohmann::json::parse(file);
 
-    int columns{ setData.at("columns") };
+    // int columns{ setData.at("columns") };
     int2d imageRes{ setData.at("imagewidth"), setData.at("imageheight") };
     int2d tileRes{ setData.at("tilewidth"), setData.at("tileheight") };
 
     std::string imagePath = fullPath;
     imagePath += setData.at("image");
 
-    olc::Sprite* tempSprite = new olc::Sprite;
-    tempSprite->LoadFromFile(imagePath);
-
-    olc::Decal* decal = new olc::Decal(tempSprite.get());
-
-    std::unique_ptr<olc::Decal> tempDecal(decal);
-
-    tileSet temp{firstgid, columns, imageRes, tileRes, std::make_unique<olc::Sprite>(shit),  };
-
-
-    temp.decal->get()->sprite( temp.sprite.get() );
-
-
-    m_tileSets.push_back(temp);
+    m_sets.push_back(std::make_unique<Set>(description.at("firstgid"), setData.at("columns"), imageRes, tileRes, imagePath));
 }
 
 bool Level::Update(float fElapsedTime){ return 1; }
@@ -230,6 +235,13 @@ void Level::Draw()
         m_layers[i].get()->LayerDraw(m_pixelGame);
     }
 }
+
+Set* Level::getSet(int index){
+    if (index > m_sets.size())
+    return m_sets[index].get();
+
+    return nullptr;
+    }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------
 // PixelGame
