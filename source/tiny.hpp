@@ -16,16 +16,57 @@ class PixelGame;
 class Component;
 struct int2d;
 struct float2d;
-struct tileSet;
 
 struct int2d{
 int x;
 int y;
+
+int2d operator + (const int2d& a) const
+{
+    return int2d{ x+a.x, y+a.y };
+}
+
+int2d operator - (const int2d& a) const
+{
+    return int2d{ x-a.x, y-a.y };
+}
+
+int2d operator + (const float2d& a) const
+{
+    return int2d{ x+(int)a.x, y+(int)a.y };
+}
+
+int2d operator - (const float2d& a) const
+{
+    return int2d{ x-(int)a.x, y-(int)a.y };
+}
+
 };
 
 struct float2d{
 float x;
 float y;
+
+float2d operator + (const float2d& a) const
+{
+    return float2d{ x+a.x, y+a.y };
+}
+
+float2d operator - (const float2d& a) const
+{
+    return float2d{ x-a.x, y-a.y };
+}
+
+float2d operator + (const float2d& a) const
+{
+    return float2d{ x+(float)a.x, y+(float)a.y };
+}
+
+float2d operator - (const float2d& a) const
+{
+    return float2d{ x-(float)a.x, y-(float)a.y };
+}
+
 };
 
 class Set{

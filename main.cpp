@@ -10,5 +10,12 @@ int main()
     
     engine.Run("asset/tiled/testMap.json");
 
+    tiny::int2d a{10, 10};
+    tiny::int2d b{5, 5};
+
+    tiny::int2d c = a - b;
+
+    std::cout << c.x << ' ' << c.y << '\n';
+
     return 0;
 }
