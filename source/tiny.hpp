@@ -20,54 +20,20 @@ struct float2d;
 struct int2d{
 int x;
 int y;
-
-int2d operator + (const int2d& a) const
-{
-    return int2d{ x+a.x, y+a.y };
-}
-
-int2d operator - (const int2d& a) const
-{
-    return int2d{ x-a.x, y-a.y };
-}
-
-int2d operator + (const float2d& a) const
-{
-    return int2d{ x+(int)a.x, y+(int)a.y };
-}
-
-int2d operator - (const float2d& a) const
-{
-    return int2d{ x-(int)a.x, y-(int)a.y };
-}
-
 };
+int2d operator + (const int2d a, const int2d b);
+int2d operator - (const int2d a, const int2d b);
+int2d operator + (const int2d a, const float2d b);
+int2d operator - (const int2d a, const float2d b);
 
 struct float2d{
 float x;
 float y;
-
-float2d operator + (const float2d& a) const
-{
-    return float2d{ x+a.x, y+a.y };
-}
-
-float2d operator - (const float2d& a) const
-{
-    return float2d{ x-a.x, y-a.y };
-}
-
-float2d operator + (const float2d& a) const
-{
-    return float2d{ x+(float)a.x, y+(float)a.y };
-}
-
-float2d operator - (const float2d& a) const
-{
-    return float2d{ x-(float)a.x, y-(float)a.y };
-}
-
 };
+float2d operator + (const float2d a, const float2d b);
+float2d operator - (const float2d a, const float2d b);
+float2d operator + (const float2d a, const int2d b);
+float2d operator - (const float2d a, const int2d b);
 
 class Set{
 
@@ -123,7 +89,7 @@ private:
     TinyEngine* m_engine;
 
 public:
-    Layer(nlohmann::json description, TinyEngine* engine);
+    Layer(nlohmann::json description);
     Layer() = default;
     void DisplayLayerName();
     bool LayerUpdate(float fElapsedTime);
@@ -136,7 +102,7 @@ private:
     std::vector<Component*> m_components;
 
 public:
-    ObjectLayer(nlohmann::json description, TinyEngine* engine);
+    ObjectLayer(nlohmann::json description);
     void LayerDraw(PixelGame* pixelRef);
 };
 
@@ -150,11 +116,9 @@ private:
     int                             m_rows{};
     int                             m_textureColumns{};
     int                             m_textureRows{};
-    std::unique_ptr<olc::Sprite>    m_sprite;
-    std::unique_ptr<olc::Decal>     m_decal;
 
 public:
-    TileLayer(nlohmann::json description, TinyEngine* engine);
+    TileLayer(nlohmann::json description);
     void LayerDraw(PixelGame* pixelRef);
 
 };
@@ -164,19 +128,21 @@ class Level
 private:
     std::vector<std::unique_ptr<Layer>> m_layers;
     std::vector<std::unique_ptr<Set>>   m_sets;
+    std::vector<int>                    m_gids{0};
     nlohmann::json                      m_description;
     PixelGame*                          m_pixelGame;
 
-    void AddLayer(nlohmann::json description, TinyEngine* engine);
+    void AddLayer(nlohmann::json description);
     void AddSet(nlohmann::json description);
 
     template <typename T>
-    void AddItem(nlohmann::json description, TinyEngine* engine);
+    void AddItem(nlohmann::json description);
 
 public:
     Level(nlohmann::json description, PixelGame* pixelGame);
     bool Update(float fElapsedTime);
     void Draw();
+    int getSetIndex(int gid);
     Set* getSet(int index);
 };
 

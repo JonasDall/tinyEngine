@@ -9,6 +9,51 @@
 
 namespace tiny
 {
+// --------------------------------------------------------------------------------------------------------------------------------------------
+// int2d
+// --------------------------------------------------------------------------------------------------------------------------------------------
+int2d operator + (const int2d a, const int2d b)
+{
+    return int2d{a.x + b.x, a.y + b.y};
+}
+
+int2d operator - (const int2d a, const int2d b)
+{
+    return int2d{a.x - b.x, a.y - b.y};
+}
+
+int2d operator + (const int2d a, const float2d b)
+{
+    return int2d{ a.x + (int)b.x, a.y + (int)b.y };
+}
+
+int2d operator - (const int2d a, const float2d b)
+{
+    return int2d{ a.x - (int)b.x, a.y - (int)b.y };
+}
+
+// --------------------------------------------------------------------------------------------------------------------------------------------
+// float2d
+// --------------------------------------------------------------------------------------------------------------------------------------------
+float2d operator + (const float2d a, const float2d b)
+{
+    return float2d{a.x + b.x, a.y + b.y };
+}
+
+float2d operator - (const float2d a, const float2d b)
+{
+    return float2d{a.x - b.x, a.y - b.y };
+}
+
+float2d operator + (const float2d a, const int2d b)
+{
+    return float2d{a.x - (float)b.x, a.y - (float)b.y };
+}
+
+float2d operator - (const float2d a, const int2d b)
+{
+    return float2d{a.x - (float)b.x, a.y - (float)b.y };
+}
 
 // --------------------------------------------------------------------------------------------------------------------------------------------
 // Set
@@ -46,10 +91,12 @@ bool Component::Signal(bool state) { return state; }
 // --------------------------------------------------------------------------------------------------------------------------------------------
 // Layer
 // --------------------------------------------------------------------------------------------------------------------------------------------
-Layer::Layer(nlohmann::json description, TinyEngine* engine) : m_engine{engine}
+Layer::Layer(nlohmann::json description)
 {
+    /*
     m_name = description.at("description").at("name");
     m_id = description.at("description").at("id");
+    */
 }
 
 void Layer::DisplayLayerName()
@@ -67,17 +114,17 @@ void Layer::LayerDraw(PixelGame* pixelRef){}
 // --------------------------------------------------------------------------------------------------------------------------------------------
 // ObjectLayer
 // --------------------------------------------------------------------------------------------------------------------------------------------
-ObjectLayer::ObjectLayer(nlohmann::json description, TinyEngine* engine) : Layer(description, engine)
+ObjectLayer::ObjectLayer(nlohmann::json description) : Layer(description)
 {
     // std::cout << description.at("description").at("objects").size() << '\n';
     // std::cout << description << "\n\n";
 
+    /*
     for (int i{}; i < description.at("description").at("objects").size(); ++i)
     {
         nlohmann::json tempDescription = description.at("description").at("objects")[i];
-
-        engine->AddComponentByID(tempDescription);
     }
+    */
 }
 
 void ObjectLayer::LayerDraw(PixelGame* pixelRef)
@@ -89,76 +136,12 @@ void ObjectLayer::LayerDraw(PixelGame* pixelRef)
 // --------------------------------------------------------------------------------------------------------------------------------------------
 // TileLayer
 // --------------------------------------------------------------------------------------------------------------------------------------------
-TileLayer::TileLayer(nlohmann::json description, TinyEngine* engine) : Layer(description, engine)
+TileLayer::TileLayer(nlohmann::json description) : Layer(description)
 {
-
-
-    std::cout << description.at("description").at("data") << '\n';
-
-    for (int i{}; i < description.at("description").at("data").size(); ++i)
-    {
-        m_mapData.push_back(description.at("description").at("data")[i]);
-    }
-
-    m_columns = description.at("description").at("height");
-    m_rows = description.at("description").at("width");
-
-
-    for (int i{}; i < description.at("description").at("properties").size(); ++i)
-    {
-        std::string prop = description.at("description").at("properties")[i].at("name");
-        char propKey = prop[0];
-        // std::cout << propKey << '\n';
-
-        switch (propKey)
-        {
-            case 's':
-            m_imagePath = description.at("description").at("properties")[i].at("value");
-            std::cout << "Image: " << m_imagePath << '\n';
-            m_sprite = std::make_unique<olc::Sprite>("asset/" + m_imagePath);
-            m_decal = std::make_unique<olc::Decal>(m_sprite.get());
-            break;
-
-            case 't':
-            // std::cout << description.at("description").at("properties");
-            m_tileSize = description.at("description").at("properties")[i].at("value");
-            std::cout << "Tilesize: " << m_tileSize << '\n';
-            break;
-        }
-    }
-
-    m_textureColumns = m_sprite.get()->height / m_tileSize;
-    m_textureRows = m_sprite.get()->width / m_tileSize;
+    std::cout << "TileLayer created:\n" << description << '\n';
 }
 
-void TileLayer::LayerDraw(PixelGame* pixelRef)
-{
-    // std::cout << "Drawing tile\n";
-
-    for (int column{}; column < m_columns; ++column)
-    {
-        for (int row{}; row < m_rows; ++row)
-        {
-            int tileToDraw = m_mapData[column * m_rows + row];
-
-            if (tileToDraw != 0)
-            {
-                int tempColumn = (tileToDraw -1) / m_textureRows;
-                int tempRow = tileToDraw - (tempColumn * m_textureRows);
-
-                pixelRef->DrawPartialDecal(
-                    {(float)(row * m_tileSize), (float)(column * m_tileSize)}, // position on screen
-                    {(float)m_tileSize, (float)m_tileSize}, // size on screen
-                    m_decal.get(), // decal
-                    {(float)((tempRow -1) * m_tileSize) + 0.01f, (float)(tempColumn * m_tileSize) + 0.01f}, //position in texture
-                    {(float)m_tileSize - 0.02f, (float)m_tileSize - 0.02f}); //size in texture
-            }
-        }
-    }
-    // pixelRef->DrawDecal(olc::vf2d(0, 0), m_decal.get());
-    // pixelRef->DrawSprite(olc::vi2d(64, 0), m_sprite.get());
-    return;
-}
+void TileLayer::LayerDraw(PixelGame* pixelRef){}
 
 // --------------------------------------------------------------------------------------------------------------------------------------------
 // Level
@@ -171,37 +154,48 @@ Level::Level(nlohmann::json description, PixelGame* pixelGame) : m_description{d
         AddSet(description.at("tilesets")[i]);
 
     std::cout << "Added " << m_sets.size() << " tilesets\n";
+
+    for (int i{}; i < description.at("layers").size(); ++i)
+    {
+        // std::cout << "Creating layer " << i << '\n';
+        // std::cout << description.at("layers")[i] << '\n';
+        AddLayer(description.at("layers")[i]);
+    }
 }
 
 template <typename T>
-void Level::AddItem(nlohmann::json description, TinyEngine* engine)
+void Level::AddItem(nlohmann::json description)
 {
     // m_layers.push_back(std::make_unique<T>());
-    m_layers.emplace_back(std::make_unique<T>(description, engine));
+    m_layers.emplace_back(std::make_unique<T>(description));
 }
 
-void Level::AddLayer(nlohmann::json description, TinyEngine* engine)
+void Level::AddLayer(nlohmann::json description)
 {
-    std::string type = description.at("description").at("type");
+    // std::cout << "Adding layer\n";
+    // std::cout << description << '\n';
+    std::string type = description.at("type");
     char typeKey = type[0];
 
+    // std::cout << "Got type " << typeKey << '\n';
     switch(typeKey)
     {
         case 't':
         // m_layers.push_back(new TileLayer(description));
-        AddItem<TileLayer>(description, engine);
+        AddItem<TileLayer>(description);
         break;
 
         case 'o':
         // m_layers.push_back( new ObjectLayer(description));
-        AddItem<ObjectLayer>(description, engine);
+        AddItem<ObjectLayer>(description);
         break;
     }
 }
 
 void Level::AddSet(nlohmann::json description)
 {
-    // std::cout << description << '\n';
+    std::cout << description.at("firstgid") << '\n';
+    m_gids.push_back( description.at("firstgid") );
     // int firstgid = description.at("firstgid");
     std::string relPath = description.at("source");
     // std::cout << relPath << '\n';
@@ -236,12 +230,31 @@ void Level::Draw()
     }
 }
 
+int Level::getSetIndex(int gid)
+{
+    std::cout << "testing " << gid << " against \n";
+
+    for (int i{}; i < m_gids.size(); ++i)
+    {
+        std::cout << m_gids[i] << '\n';
+
+        if (gid < m_gids[i])
+        {   
+            std::cout << m_gids[i-1] << " < " << gid << " < " <<m_gids[i] << '\n';
+            return i - 1;
+        }
+    }
+
+    return 0;
+}
+
 Set* Level::getSet(int index){
+
     if (index > m_sets.size())
     return m_sets[index].get();
 
     return nullptr;
-    }
+}
 
 // --------------------------------------------------------------------------------------------------------------------------------------------
 // PixelGame
