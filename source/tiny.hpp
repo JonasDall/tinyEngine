@@ -56,8 +56,7 @@ olc::Sprite* getSprite();
 olc::Decal* getDecal();
 };
 
-class Component
-{
+class Component{
 private:
     bool                m_active;
     int                 m_id;
@@ -81,55 +80,52 @@ public:
     // virtual ~Component();
 };
 
-class Layer
-{
+class Layer{
 private:
     std::string m_name  = "Default";
     int         m_id    = 0;
+
+protected:
     TinyEngine* m_engine;
+    PixelGame*  m_game;
+    Level*      m_level;
 
 public:
-    Layer(nlohmann::json description);
+    Layer(nlohmann::json description, TinyEngine* engine, PixelGame* game, Level* level);
     Layer() = default;
     void DisplayLayerName();
     bool LayerUpdate(float fElapsedTime);
-    virtual void LayerDraw(PixelGame* pixelRef);
+    virtual void LayerDraw();
 };
 
-class ObjectLayer : public Layer
-{
+class ObjectLayer : public Layer{
 private:
     std::vector<Component*> m_components;
 
 public:
-    ObjectLayer(nlohmann::json description);
-    void LayerDraw(PixelGame* pixelRef);
+    ObjectLayer(nlohmann::json description, TinyEngine* engine, PixelGame* game, Level* level);
+    void LayerDraw();
 };
 
-class TileLayer : public Layer
-{
+class TileLayer : public Layer{
 private:
-    std::vector<int>                m_mapData;
-    std::string                     m_imagePath{};
-    int                             m_tileSize{};
-    int                             m_columns{};
-    int                             m_rows{};
-    int                             m_textureColumns{};
-    int                             m_textureRows{};
+    std::vector<int>    m_mapData;
+    int                 m_height{};
+    int                 m_width{};
 
 public:
-    TileLayer(nlohmann::json description);
-    void LayerDraw(PixelGame* pixelRef);
+    TileLayer(nlohmann::json description, TinyEngine* engine, PixelGame* game, Level* level);
+    void LayerDraw();
 
 };
 
-class Level
-{
+class Level{
 private:
     std::vector<std::unique_ptr<Layer>> m_layers;
     std::vector<std::unique_ptr<Set>>   m_sets;
     std::vector<int>                    m_gids{0};
     nlohmann::json                      m_description;
+    TinyEngine*                         m_engine;
     PixelGame*                          m_pixelGame;
 
     void AddLayer(nlohmann::json description);
@@ -139,15 +135,14 @@ private:
     void AddItem(nlohmann::json description);
 
 public:
-    Level(nlohmann::json description, PixelGame* pixelGame);
+    Level(nlohmann::json description, TinyEngine* engine, PixelGame* pixelGame);
     bool Update(float fElapsedTime);
     void Draw();
     int getSetIndex(int gid);
     Set* getSet(int index);
 };
 
-class PixelGame : public olc::PixelGameEngine
-{
+class PixelGame : public olc::PixelGameEngine{
 private:
     TinyEngine* m_engine;
     std::string m_firstLevel;
@@ -160,8 +155,7 @@ public:
     bool OnUserDestroy();
 };
 
-class TinyEngine
-{
+class TinyEngine{
 private:
     // std::map<int, std::unique_ptr<Component>>           m_worldComponents;
 

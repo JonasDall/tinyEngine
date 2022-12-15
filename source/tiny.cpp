@@ -91,7 +91,7 @@ bool Component::Signal(bool state) { return state; }
 // --------------------------------------------------------------------------------------------------------------------------------------------
 // Layer
 // --------------------------------------------------------------------------------------------------------------------------------------------
-Layer::Layer(nlohmann::json description)
+Layer::Layer(nlohmann::json description, TinyEngine* engine, PixelGame* game, Level* level) : m_engine{engine}, m_game{game}, m_level{level}
 {
     /*
     m_name = description.at("description").at("name");
@@ -109,12 +109,12 @@ bool Layer::LayerUpdate(float fElapsedTime)
     return 1;
 }
 
-void Layer::LayerDraw(PixelGame* pixelRef){}
+void Layer::LayerDraw(){}
 
 // --------------------------------------------------------------------------------------------------------------------------------------------
 // ObjectLayer
 // --------------------------------------------------------------------------------------------------------------------------------------------
-ObjectLayer::ObjectLayer(nlohmann::json description) : Layer(description)
+ObjectLayer::ObjectLayer(nlohmann::json description, TinyEngine* engine, PixelGame* game, Level* level) : Layer(description, engine, game, level)
 {
     // std::cout << description.at("description").at("objects").size() << '\n';
     // std::cout << description << "\n\n";
@@ -127,7 +127,7 @@ ObjectLayer::ObjectLayer(nlohmann::json description) : Layer(description)
     */
 }
 
-void ObjectLayer::LayerDraw(PixelGame* pixelRef)
+void ObjectLayer::LayerDraw()
 {
     // std::cout << "Drawing object\n";
     return;
@@ -136,17 +136,37 @@ void ObjectLayer::LayerDraw(PixelGame* pixelRef)
 // --------------------------------------------------------------------------------------------------------------------------------------------
 // TileLayer
 // --------------------------------------------------------------------------------------------------------------------------------------------
-TileLayer::TileLayer(nlohmann::json description) : Layer(description)
+TileLayer::TileLayer(nlohmann::json description, TinyEngine* engine, PixelGame* game, Level* level) : Layer(description, engine, game, level)
 {
-    std::cout << "TileLayer created:\n" << description << '\n';
+    std::cout << "TileLayer created:\n";
+
+    for (int i{}; i < description.at("data").size(); ++i)
+        m_mapData.push_back(description.at("data")[i]);
+
+    m_height = description.at("height");
+    m_width = description.at("width");
+    
+    /*
+    if (engine == nullptr || game == nullptr || level == nullptr)
+        std::cout << "Not working!\n";
+    else
+        std::cout << "Working as it should\n";
+
+    for (int i{}; i < m_mapData.size(); ++i)
+        std::cout << m_mapData[i];    
+    std::cout << '\n';
+    */
 }
 
-void TileLayer::LayerDraw(PixelGame* pixelRef){}
+void TileLayer::LayerDraw()
+{
+
+}
 
 // --------------------------------------------------------------------------------------------------------------------------------------------
 // Level
 // --------------------------------------------------------------------------------------------------------------------------------------------
-Level::Level(nlohmann::json description, PixelGame* pixelGame) : m_description{description}, m_pixelGame{pixelGame}
+Level::Level(nlohmann::json description, TinyEngine* engine, PixelGame* pixelGame) : m_description{description}, m_engine{engine}, m_pixelGame{pixelGame}
 {
     // std::cout << description.at("tilesets") << '\n';
 
@@ -167,7 +187,7 @@ template <typename T>
 void Level::AddItem(nlohmann::json description)
 {
     // m_layers.push_back(std::make_unique<T>());
-    m_layers.emplace_back(std::make_unique<T>(description));
+    m_layers.emplace_back(std::make_unique<T>(description, m_engine, m_pixelGame, this));
 }
 
 void Level::AddLayer(nlohmann::json description)
@@ -226,7 +246,7 @@ void Level::Draw()
 {
     for (int i{}; i < m_layers.size(); ++i)
     {
-        m_layers[i].get()->LayerDraw(m_pixelGame);
+        m_layers[i].get()->LayerDraw();
     }
 }
 
@@ -308,16 +328,14 @@ void TinyEngine::LoadLevel(std::string path)
 
     nlohmann::json data = nlohmann::json::parse(file);
 
-    m_level = std::make_unique<Level>(data, m_pixelGame.get());
+    m_level = std::make_unique<Level>(data, this, m_pixelGame.get());
 
     std::cout << "Map parsed\n";
 
     return;
 }
 
-Level* TinyEngine::GetLevel(){
-    return m_level.get();
-    }
+Level* TinyEngine::GetLevel(){ return m_level.get(); }
 
 void TinyEngine::AddComponentByID(nlohmann::json& description)
 {
