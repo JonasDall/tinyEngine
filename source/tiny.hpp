@@ -140,6 +140,7 @@ public:
     void Draw();
     int getSetIndex(int gid);
     Set* getSet(int index);
+    void printSets();
 };
 
 class PixelGame : public olc::PixelGameEngine{

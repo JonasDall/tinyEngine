@@ -160,9 +160,21 @@ TileLayer::TileLayer(nlohmann::json description, TinyEngine* engine, PixelGame* 
 
 void TileLayer::LayerDraw()
 {
-
+    /*
+    // m_level->printSets();
+    if (m_level->getSet(0) == nullptr){
+        std::cout << "Set does not exist!\n";
+        return;
+    }
+    if (m_level->getSet(0)->getDecal() == nullptr){
+        std::cout << "Decal does not exist!\n";
+        return;
+    }
+    std::cout << "Decal should be drawn\n";
+    */
+   
+    m_game->DrawDecal({0, 0}, m_level->getSet(0)->getDecal());
 }
-
 // --------------------------------------------------------------------------------------------------------------------------------------------
 // Level
 // --------------------------------------------------------------------------------------------------------------------------------------------
@@ -184,14 +196,12 @@ Level::Level(nlohmann::json description, TinyEngine* engine, PixelGame* pixelGam
 }
 
 template <typename T>
-void Level::AddItem(nlohmann::json description)
-{
+void Level::AddItem(nlohmann::json description){
     // m_layers.push_back(std::make_unique<T>());
     m_layers.emplace_back(std::make_unique<T>(description, m_engine, m_pixelGame, this));
 }
 
-void Level::AddLayer(nlohmann::json description)
-{
+void Level::AddLayer(nlohmann::json description){
     // std::cout << "Adding layer\n";
     // std::cout << description << '\n';
     std::string type = description.at("type");
@@ -212,8 +222,7 @@ void Level::AddLayer(nlohmann::json description)
     }
 }
 
-void Level::AddSet(nlohmann::json description)
-{
+void Level::AddSet(nlohmann::json description){
     std::cout << description.at("firstgid") << '\n';
     m_gids.push_back( description.at("firstgid") );
     // int firstgid = description.at("firstgid");
@@ -242,16 +251,14 @@ void Level::AddSet(nlohmann::json description)
 
 bool Level::Update(float fElapsedTime){ return 1; }
 
-void Level::Draw()
-{
+void Level::Draw(){
     for (int i{}; i < m_layers.size(); ++i)
     {
         m_layers[i].get()->LayerDraw();
     }
 }
 
-int Level::getSetIndex(int gid)
-{
+int Level::getSetIndex(int gid){
     std::cout << "testing " << gid << " against \n";
 
     for (int i{}; i < m_gids.size(); ++i)
@@ -270,12 +277,22 @@ int Level::getSetIndex(int gid)
 
 Set* Level::getSet(int index){
 
-    if (index > m_sets.size())
-    return m_sets[index].get();
+    // std::cout << "Index " << index << " is within " << m_sets.size() << '\n';
+
+    if (index < m_sets.size())
+    {
+        return m_sets[index].get();
+    }
 
     return nullptr;
 }
 
+void Level::printSets(){
+    for (int i{}; i < m_sets.size(); ++i)
+    {
+        std::cout << "Tileset " << i << " with firstgid " << m_sets[i].get()->getFirstgid() << '\n';
+    }
+}
 // --------------------------------------------------------------------------------------------------------------------------------------------
 // PixelGame
 // --------------------------------------------------------------------------------------------------------------------------------------------
