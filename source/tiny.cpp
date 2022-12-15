@@ -160,20 +160,40 @@ TileLayer::TileLayer(nlohmann::json description, TinyEngine* engine, PixelGame* 
 
 void TileLayer::LayerDraw()
 {
-    /*
-    // m_level->printSets();
-    if (m_level->getSet(0) == nullptr){
-        std::cout << "Set does not exist!\n";
-        return;
+    //Column
+    for (int column{}; column < m_height; ++column)
+    {
+        //Row
+        for (int row{}; row < m_width; ++row)
+        {
+            int tileIndex = column * m_width + row;
+            int tileData = m_mapData[tileIndex];
+
+            if (tileData != 0)
+            {
+                int setIndex = m_level->getSetIndex(tileData);
+                Set* set = m_level->getSet(setIndex);
+
+                int relTileData = tileData - set->getFirstgid() + 1;
+
+                int2d texturePos{};
+                texturePos.x = (relTileData - 1) % set->getColumns();
+                texturePos.y = (relTileData - 1) / set->getColumns();
+
+                m_game->DrawPartialDecal(
+                    {(float)(row * 16), (float)(column * 16)},                                                                              //Screen position
+                    {(float)set->getTileRes().x, (float)set->getTileRes().y},                                                               //Size on screen
+                    set->getDecal(),                                                                                                        //Decal
+                    {(float)(texturePos.x * set->getTileRes().x) + (float)0.01, (float)(texturePos.y * set->getTileRes().y) + (float)0.01}, //Texture position
+                    {(float)set->getTileRes().x - (float)0.02, (float)set->getTileRes().y - (float)0.02}                                    //Size on texture
+                    );
+            }
+        }
+        // std::cout << '\n';
     }
-    if (m_level->getSet(0)->getDecal() == nullptr){
-        std::cout << "Decal does not exist!\n";
-        return;
-    }
-    std::cout << "Decal should be drawn\n";
-    */
-   
-    m_game->DrawDecal({0, 0}, m_level->getSet(0)->getDecal());
+
+    // std::cout << '\n';
+    // m_game->DrawDecal({0, 0}, m_level->getSet(0)->getDecal());
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------
 // Level
@@ -223,8 +243,8 @@ void Level::AddLayer(nlohmann::json description){
 }
 
 void Level::AddSet(nlohmann::json description){
-    std::cout << description.at("firstgid") << '\n';
-    m_gids.push_back( description.at("firstgid") );
+    // std::cout << description.at("firstgid") << '\n';
+    // m_gids.push_back( description.at("firstgid") );
     // int firstgid = description.at("firstgid");
     std::string relPath = description.at("source");
     // std::cout << relPath << '\n';
@@ -258,20 +278,16 @@ void Level::Draw(){
     }
 }
 
-int Level::getSetIndex(int gid){
-    std::cout << "testing " << gid << " against \n";
+int Level::getSetIndex(int tile){
 
-    for (int i{}; i < m_gids.size(); ++i)
+    for (int i{}; i < m_sets.size(); ++i)
     {
-        std::cout << m_gids[i] << '\n';
-
-        if (gid < m_gids[i])
-        {   
-            std::cout << m_gids[i-1] << " < " << gid << " < " <<m_gids[i] << '\n';
-            return i - 1;
-        }
+        if (i + 1 == m_sets.size())
+            return i;
+        
+        if (tile < m_sets[i + 1].get()->getFirstgid())
+            return i;
     }
-
     return 0;
 }
 
@@ -315,6 +331,8 @@ bool PixelGame::OnUserCreate()
 
 bool PixelGame::OnUserUpdate(float fElapsedTime)
 {
+    Clear(olc::GREY);
+
     if (GetKey(olc::Key::ENTER).bPressed) return 0;
 
     // m_engine->GetLevel()->Update(fElapsedTime);
@@ -324,7 +342,6 @@ bool PixelGame::OnUserUpdate(float fElapsedTime)
 }
 
 bool PixelGame::OnUserDestroy(){ return 1; }
-
 // --------------------------------------------------------------------------------------------------------------------------------------------
 // TinyEngine
 // --------------------------------------------------------------------------------------------------------------------------------------------

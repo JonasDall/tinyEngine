@@ -123,7 +123,6 @@ class Level{
 private:
     std::vector<std::unique_ptr<Layer>> m_layers;
     std::vector<std::unique_ptr<Set>>   m_sets;
-    std::vector<int>                    m_gids{0};
     nlohmann::json                      m_description;
     TinyEngine*                         m_engine;
     PixelGame*                          m_pixelGame;
@@ -138,7 +137,7 @@ public:
     Level(nlohmann::json description, TinyEngine* engine, PixelGame* pixelGame);
     bool Update(float fElapsedTime);
     void Draw();
-    int getSetIndex(int gid);
+    int getSetIndex(int tile);
     Set* getSet(int index);
     void printSets();
 };

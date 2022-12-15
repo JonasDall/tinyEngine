@@ -61,10 +61,10 @@
         },
         "testMap.json": {
             "scale": 2,
-            "selectedLayer": 2,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 190.5,
-                "y": 157
+                "x": 169.5,
+                "y": 113
             }
         },
         "testTile.json": {
