@@ -10,55 +10,48 @@
 namespace tiny
 {
 // --------------------------------------------------------------------------------------------------------------------------------------------
-// int2d
+// Functions
 // --------------------------------------------------------------------------------------------------------------------------------------------
-int2d operator + (const int2d a, const int2d b)
+olc::Pixel hexToPixel(std::string hex)
 {
-    return int2d{a.x + b.x, a.y + b.y};
-}
+    std::string hexValues[3];
+    std::string finalHex;
+    unsigned int intValues[3]{};
+    // unsigned int values;
 
-int2d operator - (const int2d a, const int2d b)
-{
-    return int2d{a.x - b.x, a.y - b.y};
-}
+    hex.erase(hex.begin());
 
-int2d operator + (const int2d a, const float2d b)
-{
-    return int2d{ a.x + (int)b.x, a.y + (int)b.y };
-}
+    if (hex.length() == 6)
+    {
+        hex = "FF" + hex;
+    }
 
-int2d operator - (const int2d a, const float2d b)
-{
-    return int2d{ a.x - (int)b.x, a.y - (int)b.y };
-}
+    hexValues[0] = hex[0] + hex[1];
+    hexValues[1] = hex[2] + hex[3];
+    hexValues[2] = hex[4] + hex[5];
+    hexValues[3] = hex[6] + hex[7];
 
-// --------------------------------------------------------------------------------------------------------------------------------------------
-// float2d
-// --------------------------------------------------------------------------------------------------------------------------------------------
-float2d operator + (const float2d a, const float2d b)
-{
-    return float2d{a.x + b.x, a.y + b.y };
-}
+    for (int i{}; i < std::size(hexValues); ++i)
+    {
+        std::cout << hexValues[i] << '\n';
+    }
 
-float2d operator - (const float2d a, const float2d b)
-{
-    return float2d{a.x - b.x, a.y - b.y };
-}
+    for (int i{}; i < std::size(hexValues); ++i)
+    {
+        std::stringstream stream;
+        stream << std::hex << hexValues[i];
+        stream >> intValues[i];
+        std::cout << intValues[i] << '\n';
+    }
 
-float2d operator + (const float2d a, const int2d b)
-{
-    return float2d{a.x - (float)b.x, a.y - (float)b.y };
-}
-
-float2d operator - (const float2d a, const int2d b)
-{
-    return float2d{a.x - (float)b.x, a.y - (float)b.y };
+    // return olc::Pixel{(unsigned int)intValues[0], (unsigned int)intValues[1], (unsigned int)intValues[2], (unsigned int)intValues[3]};
+    return olc::WHITE;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------
 // Set
 // --------------------------------------------------------------------------------------------------------------------------------------------
-Set::Set(int gid, int col, int2d im, int2d ti, std::string path) : firstgid{gid}, columns{col}, imageRes{im}, tileRes{ti}{
+Set::Set(int gid, int col, olc::vi2d im, olc::vi2d ti, std::string path) : firstgid{gid}, columns{col}, imageRes{im}, tileRes{ti}{
     sprite = std::make_unique<olc::Sprite>(path);
 
     decal = std::make_unique<olc::Decal>(sprite.get());
@@ -66,8 +59,8 @@ Set::Set(int gid, int col, int2d im, int2d ti, std::string path) : firstgid{gid}
 
 int Set::getFirstgid(){ return firstgid; }
 int Set::getColumns(){ return columns; }
-int2d Set::getImageRes(){ return imageRes; }
-int2d Set::getTileRes(){ return tileRes; }
+olc::vi2d Set::getImageRes(){ return imageRes; }
+olc::vi2d Set::getTileRes(){ return tileRes; }
 olc::Sprite* Set::getSprite(){ return sprite.get(); }
 olc::Decal*  Set::getDecal(){ return decal.get(); }
 
@@ -140,12 +133,29 @@ TileLayer::TileLayer(nlohmann::json description, TinyEngine* engine, PixelGame* 
 {
     std::cout << "TileLayer created:\n";
 
-    for (int i{}; i < description.at("data").size(); ++i)
-        m_mapData.push_back(description.at("data")[i]);
-
     m_height = description.at("height");
     m_width = description.at("width");
-    
+
+    for (int i{}; i < m_height; ++i)
+    {
+        std::vector<int> tempRow;
+
+        for (int j{}; j < m_width; ++j)
+        {
+            int index = (m_width * i) + j;
+
+            if ( index < description.at("data").size() )
+                tempRow.push_back( description.at("data")[index] );
+        }
+
+        m_mapData.push_back(tempRow);
+    }
+
+    if (description.contains("tintcolor"))
+    {   
+        m_tint = hexToPixel(description.at("tintcolor"));
+    }
+
     /*
     if (engine == nullptr || game == nullptr || level == nullptr)
         std::cout << "Not working!\n";
@@ -166,8 +176,7 @@ void TileLayer::LayerDraw()
         //Row
         for (int row{}; row < m_width; ++row)
         {
-            int tileIndex = column * m_width + row;
-            int tileData = m_mapData[tileIndex];
+            int tileData = m_mapData[column][row];
 
             if (tileData != 0)
             {
@@ -176,7 +185,7 @@ void TileLayer::LayerDraw()
 
                 int relTileData = tileData - set->getFirstgid() + 1;
 
-                int2d texturePos{};
+                olc::vi2d texturePos{};
                 texturePos.x = (relTileData - 1) % set->getColumns();
                 texturePos.y = (relTileData - 1) / set->getColumns();
 
@@ -185,7 +194,8 @@ void TileLayer::LayerDraw()
                     {(float)set->getTileRes().x, (float)set->getTileRes().y},                                                               //Size on screen
                     set->getDecal(),                                                                                                        //Decal
                     {(float)(texturePos.x * set->getTileRes().x) + (float)0.01, (float)(texturePos.y * set->getTileRes().y) + (float)0.01}, //Texture position
-                    {(float)set->getTileRes().x - (float)0.02, (float)set->getTileRes().y - (float)0.02}                                    //Size on texture
+                    {(float)set->getTileRes().x - (float)0.02, (float)set->getTileRes().y - (float)0.02},                                   //Size on texture
+                    m_tint                                                                                                                  //Tint
                     );
             }
         }
@@ -195,6 +205,7 @@ void TileLayer::LayerDraw()
     // std::cout << '\n';
     // m_game->DrawDecal({0, 0}, m_level->getSet(0)->getDecal());
 }
+
 // --------------------------------------------------------------------------------------------------------------------------------------------
 // Level
 // --------------------------------------------------------------------------------------------------------------------------------------------
@@ -260,8 +271,8 @@ void Level::AddSet(nlohmann::json description){
     nlohmann::json setData = nlohmann::json::parse(file);
 
     // int columns{ setData.at("columns") };
-    int2d imageRes{ setData.at("imagewidth"), setData.at("imageheight") };
-    int2d tileRes{ setData.at("tilewidth"), setData.at("tileheight") };
+    olc::vi2d imageRes{ setData.at("imagewidth"), setData.at("imageheight") };
+    olc::vi2d tileRes{ setData.at("tilewidth"), setData.at("tileheight") };
 
     std::string imagePath = fullPath;
     imagePath += setData.at("image");

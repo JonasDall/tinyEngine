@@ -14,46 +14,26 @@ class Level;
 class TinyEngine;
 class PixelGame;
 class Component;
-struct int2d;
-struct float2d;
 
-struct int2d{
-int x;
-int y;
-};
-int2d operator + (const int2d a, const int2d b);
-int2d operator - (const int2d a, const int2d b);
-int2d operator + (const int2d a, const float2d b);
-int2d operator - (const int2d a, const float2d b);
-
-struct float2d{
-float x;
-float y;
-};
-float2d operator + (const float2d a, const float2d b);
-float2d operator - (const float2d a, const float2d b);
-float2d operator + (const float2d a, const int2d b);
-float2d operator - (const float2d a, const int2d b);
+olc::Pixel hexToPixel();
 
 class Set{
-
 private:
-int firstgid = 0;
-int columns = 0;
-int2d imageRes = {0, 0};
-int2d tileRes = {0, 0};
-std::unique_ptr<olc::Sprite> sprite;
-std::unique_ptr<olc::Decal> decal;
+    int                             firstgid = 0;
+    int                             columns = 0;
+    olc::vi2d                       imageRes = {0, 0};
+    olc::vi2d                       tileRes = {0, 0};
+    std::unique_ptr<olc::Sprite>    sprite;
+    std::unique_ptr<olc::Decal>     decal;
 
 public:
-Set(int gid, int col, int2d im, int2d ti, std::string path);
-
-int getFirstgid();
-int getColumns();
-int2d getImageRes();
-int2d getTileRes();
-olc::Sprite* getSprite();
-olc::Decal* getDecal();
+    Set(int gid, int col, olc::vi2d im, olc::vi2d ti, std::string path);
+    int getFirstgid();
+    int getColumns();
+    olc::vi2d getImageRes();
+    olc::vi2d getTileRes();
+    olc::Sprite* getSprite();
+    olc::Decal* getDecal();
 };
 
 class Component{
@@ -89,6 +69,7 @@ protected:
     TinyEngine* m_engine;
     PixelGame*  m_game;
     Level*      m_level;
+    olc::Pixel  m_tint = olc::WHITE;
 
 public:
     Layer(nlohmann::json description, TinyEngine* engine, PixelGame* game, Level* level);
@@ -109,9 +90,9 @@ public:
 
 class TileLayer : public Layer{
 private:
-    std::vector<int>    m_mapData;
-    int                 m_height{};
-    int                 m_width{};
+    std::vector<std::vector<int>>   m_mapData;
+    int                             m_height{};
+    int                             m_width{};
 
 public:
     TileLayer(nlohmann::json description, TinyEngine* engine, PixelGame* game, Level* level);
@@ -142,25 +123,23 @@ public:
     void printSets();
 };
 
-class PixelGame : public olc::PixelGameEngine{
-private:
-    TinyEngine* m_engine;
-    std::string m_firstLevel;
+class PixelGame : public olc::PixelGameEngine {
+    private:
+        TinyEngine* m_engine;
+        std::string m_firstLevel;
 
-public:
-    PixelGame(TinyEngine* engine, std::string level);
-    ~PixelGame();
-    bool OnUserCreate();
-    bool OnUserUpdate(float fElapsedTime);
-    bool OnUserDestroy();
+    public:
+        PixelGame(TinyEngine* engine, std::string level);
+        ~PixelGame();
+        bool OnUserCreate();
+        bool OnUserUpdate(float fElapsedTime);
+        bool OnUserDestroy();
 };
 
-class TinyEngine{
+class TinyEngine {
 private:
     // std::map<int, std::unique_ptr<Component>>           m_worldComponents;
-
     std::unique_ptr<Level>                              m_level;
-
     std::unique_ptr<PixelGame>                          m_pixelGame;
     olc::vi2d                                           m_resolution;
     std::map<std::string, std::function<Component*()>>  m_objectFactory;
@@ -170,20 +149,15 @@ private:
 public:
     TinyEngine(olc::vi2d resolution, std::string name);
     ~TinyEngine();
-
     void Run(std::string level);
-
     void LoadLevel(std::string path);
     Level* GetLevel();
-
     Component* GetComponentByID(int id);
     void AddComponentByID(nlohmann::json& description);
     
     std::string GetName();
-
     void AddDefinition(std::string key, std::function<Component*()> lambda);
     std::function<Component*()> GetDefinition(std::string key);
-
     // ComponentFactory& Getfactory();
 };
 }

@@ -60,11 +60,11 @@
             "scaleInDock": 1
         },
         "testMap.json": {
-            "scale": 2,
+            "scale": 3,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 169.5,
-                "y": 113
+                "x": 166.83333333333334,
+                "y": 126.33333333333333
             }
         },
         "testTile.json": {
@@ -94,9 +94,9 @@
     "project": "test.tiled-project",
     "property.type": "object",
     "recentFiles": [
+        "testMap.json",
         "testTile2.json",
         "testTile.json",
-        "testMap.json",
         "C:/Users/jonas/Documents/Koding/Workspaces/jsonTest/resources/Map.tmx",
         "C:/Users/jonas/Documents/Koding/Workspaces/jsonTest/resources/Basic.tsx",
         "C:/Users/jonas/Documents/Koding/Workspaces/jsonTest/resources/Basic2.tsx"
