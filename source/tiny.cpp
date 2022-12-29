@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <functional>
-#include <iostream>
+#include <string>
 
 #include "tiny.hpp"
 #include "../lib/json.hpp"
@@ -14,41 +14,30 @@ namespace tiny
 // --------------------------------------------------------------------------------------------------------------------------------------------
 olc::Pixel hexToPixel(std::string hex)
 {
-    std::string hexValues[3];
-    std::string finalHex;
-    unsigned int intValues[3]{};
-    // unsigned int values;
-
     hex.erase(hex.begin());
+    unsigned int intValues[4]{};
 
     if (hex.length() == 6)
     {
-        hex = "FF" + hex;
+        hex = "ff" + hex;
     }
 
-    hexValues[0] = hex[0] + hex[1];
-    hexValues[1] = hex[2] + hex[3];
-    hexValues[2] = hex[4] + hex[5];
-    hexValues[3] = hex[6] + hex[7];
+    if (hex.length() != 8)  return olc::WHITE;
 
-    for (int i{}; i < std::size(hexValues); ++i)
+    for (int i{}; i < hex.length() / 2; ++i)
     {
-        std::cout << hexValues[i] << '\n';
-    }
+        std::string temp{"0x"};
+        temp.push_back(hex.at(i * 2));
+        temp.push_back(hex.at((i * 2)+ 1));
 
-    for (int i{}; i < std::size(hexValues); ++i)
-    {
-        std::stringstream stream;
-        stream << std::hex << hexValues[i];
-        stream >> intValues[i];
+        intValues[i] = std::stoul(temp, nullptr, 16);
         std::cout << intValues[i] << '\n';
     }
 
-    // return olc::Pixel{(unsigned int)intValues[0], (unsigned int)intValues[1], (unsigned int)intValues[2], (unsigned int)intValues[3]};
-    return olc::WHITE;
+    return {static_cast<uint8_t>(intValues[1]), static_cast<uint8_t>(intValues[2]), static_cast<uint8_t>(intValues[3]), static_cast<uint8_t>(intValues[0])};
 }
 
-// --------------------------------------------------------------------------------------------------------------------------------------------
+// -------------------------------------------------------
 // Set
 // --------------------------------------------------------------------------------------------------------------------------------------------
 Set::Set(int gid, int col, olc::vi2d im, olc::vi2d ti, std::string path) : firstgid{gid}, columns{col}, imageRes{im}, tileRes{ti}{

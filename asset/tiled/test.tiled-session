@@ -59,20 +59,24 @@
         "C:/Users/jonas/Documents/Koding/Workspaces/tinyEngine/asset/testTileset.tsx": {
             "scaleInDock": 1
         },
+        "nhjflkjsf.json": {
+            "scaleInDock": 4,
+            "scaleInEditor": 1
+        },
         "testMap.json": {
             "scale": 3,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 166.83333333333334,
-                "y": 126.33333333333333
+                "x": 121.33333333333334,
+                "y": 114
             }
         },
         "testTile.json": {
-            "scaleInDock": 1,
+            "scaleInDock": 4,
             "scaleInEditor": 1
         },
         "testTile2.json": {
-            "scaleInDock": 1,
+            "scaleInDock": 4,
             "scaleInEditor": 1
         }
     },
@@ -89,14 +93,16 @@
     "openFiles": [
         "testMap.json",
         "testTile.json",
-        "testTile2.json"
+        "testTile2.json",
+        "nhjflkjsf.json"
     ],
     "project": "test.tiled-project",
     "property.type": "object",
     "recentFiles": [
-        "testMap.json",
+        "nhjflkjsf.json",
         "testTile2.json",
         "testTile.json",
+        "testMap.json",
         "C:/Users/jonas/Documents/Koding/Workspaces/jsonTest/resources/Map.tmx",
         "C:/Users/jonas/Documents/Koding/Workspaces/jsonTest/resources/Basic.tsx",
         "C:/Users/jonas/Documents/Koding/Workspaces/jsonTest/resources/Basic2.tsx"
