@@ -64,11 +64,14 @@
             "scaleInEditor": 1
         },
         "testMap.json": {
+            "expandedGroupLayers": [
+                4
+            ],
             "scale": 3,
-            "selectedLayer": 1,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 121.33333333333334,
-                "y": 114
+                "x": 98.5,
+                "y": 132
             }
         },
         "testTile.json": {

@@ -31,7 +31,6 @@ olc::Pixel hexToPixel(std::string hex)
         temp.push_back(hex.at((i * 2)+ 1));
 
         intValues[i] = std::stoul(temp, nullptr, 16);
-        std::cout << intValues[i] << '\n';
     }
 
     return {static_cast<uint8_t>(intValues[1]), static_cast<uint8_t>(intValues[2]), static_cast<uint8_t>(intValues[3]), static_cast<uint8_t>(intValues[0])};
@@ -56,7 +55,7 @@ olc::Decal*  Set::getDecal(){ return decal.get(); }
 // --------------------------------------------------------------------------------------------------------------------------------------------
 // Component
 // --------------------------------------------------------------------------------------------------------------------------------------------
-Component::Component(nlohmann::json description) : m_description{description}
+Component::Component(nlohmann::json description)
 {
     // std::cout << "Component with id " << description.at("id") << " created\n" << "Description: ";
     // std::cout << description << "\n\n";
@@ -205,7 +204,7 @@ Level::Level(nlohmann::json description, TinyEngine* engine, PixelGame* pixelGam
     for (int i{}; i < description.at("tilesets").size(); ++i)
         AddSet(description.at("tilesets")[i]);
 
-    std::cout << "Added " << m_sets.size() << " tilesets\n";
+    // std::cout << "Added " << m_sets.size() << " tilesets\n";
 
     for (int i{}; i < description.at("layers").size(); ++i)
     {

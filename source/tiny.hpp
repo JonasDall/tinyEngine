@@ -10,12 +10,18 @@
 
 namespace tiny
 {
-class Level;
-class TinyEngine;
-class PixelGame;
+class Set;
 class Component;
+class Node;
+class NodeTree;
+class Layer;
+class ObjectLayer;
+class TileLayer;
+class Level;
+class PixelGame;
+class TinyEngine;
 
-olc::Pixel hexToPixel();
+olc::Pixel hexToPixel(std::string hex);
 
 class Set{
 private:
@@ -41,8 +47,6 @@ private:
     bool                m_active;
     int                 m_id;
     std::vector<int>    m_childrenID;
-    nlohmann::json      m_description;
-
 /*
     olc::vf2d               m_position;
     olc::vf2d               m_velocity;
@@ -59,6 +63,10 @@ public:
     // virtual bool SetProperties(nlohmann::json* data);
     // virtual ~Component();
 };
+
+class Node{};
+
+class NodeTree{};
 
 class Layer{
 private:

@@ -1,0 +1,10 @@
+Collisions and constraints are components
+COllisions deal with all physics related
+All collisions have:
+SetPosition (from component)
+AddPosition (from component)
+and AddForce
+
+Only rigidbodies react to AddForce
+
+In order for a rigidbody to be connected to another object, a constraint has to be put in use. A constraint can be locked to an axis as well.
