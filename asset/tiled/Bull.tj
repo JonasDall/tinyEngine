@@ -1,0 +1,24 @@
+{ "object":
+    {
+     "class":"",
+     "height":0,
+     "id":19,
+     "name":"Bull",
+     "point":true,
+     "properties":[
+            {
+             "name":"fq",
+             "type":"color",
+             "value":""
+            }, 
+            {
+             "name":"fqw",
+             "type":"color",
+             "value":""
+            }],
+     "rotation":0,
+     "visible":true,
+     "width":0
+    },
+ "type":"template"
+}

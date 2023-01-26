@@ -1,0 +1,13 @@
+{ "object":
+    {
+     "class":"",
+     "height":0,
+     "id":12,
+     "name":"Player",
+     "point":true,
+     "rotation":0,
+     "visible":true,
+     "width":0
+    },
+ "type":"template"
+}

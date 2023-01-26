@@ -65,8 +65,6 @@ bool Component::ComponentUpdate(float fElapsedTime){ return 1; }
 
 void Component::ComponentDraw(PixelGame& pixelRef){}
 
-bool Component::Signal(bool state) { return state; }
-
 // Component::~Component() { std::cout << "Destruct" << '\n'; }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------

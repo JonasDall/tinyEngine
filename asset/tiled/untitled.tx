@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+ <object>
+  <properties>
+   <property name="Ref1" type="object" value="12"/>
+   <property name="Ref2" type="object" value="13"/>
+   <property name="Ref3" type="object" value="13"/>
+  </properties>
+  <point/>
+ </object>
+</template>

@@ -10,18 +10,18 @@
 
 namespace tiny
 {
-class Set;
-class Component;
-class Node;
-class NodeTree;
-class Layer;
-class ObjectLayer;
-class TileLayer;
-class Level;
-class PixelGame;
-class TinyEngine;
+    class Set;
+    class Component;
+    class Node;
+    class NodeTree;
+    class Layer;
+    class ObjectLayer;
+    class TileLayer;
+    class Level;
+    class PixelGame;
+    class TinyEngine;
 
-olc::Pixel hexToPixel(std::string hex);
+    olc::Pixel hexToPixel(std::string hex);
 
 class Set{
 private:
@@ -44,31 +44,32 @@ public:
 
 class Component{
 private:
-    bool                m_active;
-    int                 m_id;
-    std::vector<int>    m_childrenID;
-/*
-    olc::vf2d               m_position;
-    olc::vf2d               m_velocity;
-*/
+    bool        m_active;
+    TinyEngine* m_engine;
+    olc::vf2d   m_position{};
 
 public:
     Component(nlohmann::json description);
     virtual bool ComponentUpdate(float fElapsedTime);
     virtual void ComponentDraw(PixelGame& pixelRef);
-    // virtual bool SetLocation(olc::vf2d newLocation);
-    // virtual bool AddLocation(olc::vf2d deltaLocation);
-    // virtual bool AddForce(olc::vf2d velocity);
-    virtual bool Signal(bool state);
-    // virtual bool SetProperties(nlohmann::json* data);
-    // virtual ~Component();
+    virtual bool SetLocation(olc::vf2d newLocation);
+    virtual bool AddLocation(olc::vf2d deltaLocation);
+    virtual ~Component();
 };
 
-class Node{};
+class Node{
+    int                 m_ID{};
+    Component*          m_component;
+    std::vector<Node>  m_children;
+};
 
-class NodeTree{};
+class NodeTree{
+    Node m_root;
 
-class Layer{
+    
+};
+
+class Layer : public Component{
 private:
     std::string m_name  = "Default";
     int         m_id    = 0;
@@ -163,6 +164,8 @@ public:
     Component* GetComponentByID(int id);
     void AddComponentByID(nlohmann::json& description);
     
+
+
     std::string GetName();
     void AddDefinition(std::string key, std::function<Component*()> lambda);
     std::function<Component*()> GetDefinition(std::string key);

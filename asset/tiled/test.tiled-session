@@ -60,31 +60,33 @@
             "scaleInDock": 1
         },
         "nhjflkjsf.json": {
-            "scaleInDock": 4,
-            "scaleInEditor": 1
+            "scaleInDock": 2,
+            "scaleInEditor": 4
         },
         "testMap.json": {
             "expandedGroupLayers": [
-                4
+                4,
+                7
             ],
             "scale": 3,
-            "selectedLayer": 0,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 98.5,
-                "y": 132
+                "x": 134.16666666666663,
+                "y": 125
             }
         },
         "testTile.json": {
-            "scaleInDock": 4,
+            "scaleInDock": 2,
             "scaleInEditor": 1
         },
         "testTile2.json": {
-            "scaleInDock": 4,
+            "scaleInDock": 2,
             "scaleInEditor": 1
         }
     },
     "last.exportedFilePath": "C:/Users/jonas/Documents/Koding/Workspaces/tinyEngine/asset",
     "last.imagePath": "C:/Users/jonas/Documents/Koding/Workspaces/tinyEngine/asset",
+    "last.objectTemplatePath": "C:/Users/jonas/Documents/Koding/Workspaces/tinyEngine/asset/tiled",
     "lastUsedTilesetExportFilter": "JSON tileset files (*.tsj *.json)",
     "map.height": 15,
     "map.lastUsedExportFilter": "JSON map files (*.json)",
@@ -95,17 +97,15 @@
     "map.width": 16,
     "openFiles": [
         "testMap.json",
-        "testTile.json",
-        "testTile2.json",
-        "nhjflkjsf.json"
+        "testTile.json"
     ],
     "project": "test.tiled-project",
-    "property.type": "object",
+    "property.type": "color",
     "recentFiles": [
-        "nhjflkjsf.json",
-        "testTile2.json",
         "testTile.json",
         "testMap.json",
+        "testTile2.json",
+        "nhjflkjsf.json",
         "C:/Users/jonas/Documents/Koding/Workspaces/jsonTest/resources/Map.tmx",
         "C:/Users/jonas/Documents/Koding/Workspaces/jsonTest/resources/Basic.tsx",
         "C:/Users/jonas/Documents/Koding/Workspaces/jsonTest/resources/Basic2.tsx"
